@@ -4,7 +4,7 @@ from tkinter import messagebox
 
 from cryptography.fernet import Fernet
 
-from constants import PASSCODE, SAVE_TYPE, FILE_PATH, FILE_EXIST
+from constants import PASSCODE, SAVE_TYPE, FILE_PATH
 
 
 class EncryptionDecryption:
@@ -45,6 +45,7 @@ class EncryptionDecryption:
         :param password: str
         :return: messagebox
         """
+        FILE_EXIST = os.path.exists(FILE_PATH)
         with open(FILE_PATH, "a", newline='') as csvfile:
             fieldnames = ['AppLabel', 'Key', 'Password']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
