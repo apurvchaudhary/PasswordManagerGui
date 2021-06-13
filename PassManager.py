@@ -66,7 +66,7 @@ def browse_file(window):
     """
     file browser for chrome password syncing
     """
-    filename = filedialog.askopenfilename(initialdir="/", title="Select A File", filetype=(("CSV Files", "*.csv"),))
+    filename = filedialog.askopenfilename(initialdir="/", title="Select A File", filetypes=(("CSV Files", "*.csv"),))
     label = tk.Label(window, text="")
     label.grid(column=1, row=14)
     label.configure(text=filename)
