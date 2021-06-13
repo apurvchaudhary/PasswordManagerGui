@@ -1,10 +1,12 @@
 import csv
+import hashlib
 import os
 from tkinter import messagebox
 
 from cryptography.fernet import Fernet
 
-from constants import PASSCODE, SAVE_TYPE, FILE_PATH
+from constants import HEX_DIGEST, SAVE_TYPE
+from filePaths import PASSWORD_CSV_PATH as FILE_PATH
 
 
 class EncryptionDecryption:
@@ -12,7 +14,7 @@ class EncryptionDecryption:
     encryption decryption class
     """
 
-    def encrypt(self, app, password):
+    def encrypt(self, app, username, password, url):
         """
         method to encrypt given password for given app with generated key in csv
         :param app: str
@@ -22,7 +24,7 @@ class EncryptionDecryption:
         key = Fernet.generate_key()
         fernet = Fernet(key)
         encoded = fernet.encrypt(password.encode())
-        return self.write_to_excel(app, key, encoded)
+        return self.write_to_excel(app=app, username=username, password=encoded, url=url, key=key)
 
     @staticmethod
     def decrypt(key, enc_password):
@@ -36,25 +38,23 @@ class EncryptionDecryption:
         return fernet.decrypt(enc_password).decode()
 
     @staticmethod
-    def write_to_excel(app, key, password):
+    def write_to_excel(app, username, password, url, key):
         """
         method to write data to csv rows
         writing to csv two types : one is encrypted form with key OR plain text with key as Plain Text
-        :param key: encryption key
-        :param app: str
-        :param password: str
-        :return: messagebox
         """
-        FILE_EXIST = os.path.exists(FILE_PATH)
+        file_exist = os.path.exists(FILE_PATH)
         with open(FILE_PATH, "a", newline='') as csvfile:
-            fieldnames = ['AppLabel', 'Key', 'Password']
+            fieldnames = ['AppLabel', 'Username', 'Url', 'Password', 'Key']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-            if not FILE_EXIST:
+            if not file_exist:
                 writer.writeheader()
             if key == SAVE_TYPE["PLAIN"]:
-                writer.writerow({"AppLabel": app, "Key": key, "Password": password})
+                writer.writerow({"AppLabel": app, "Username": username, "Url": url,
+                                 "Password": password, "Key": key})
             else:
-                writer.writerow({"AppLabel": app, "Key": key.decode('utf-8'), "Password": password.decode('utf-8')})
+                writer.writerow({"AppLabel": app, "Username": username, "Url": url,
+                                 "Password": password.decode('utf-8'), "Key": key.decode('utf-8')})
             return messagebox.showinfo("Success", f"Password for {app} saved successfully")
 
     @staticmethod
@@ -66,13 +66,24 @@ class EncryptionDecryption:
         app_names = []
         if not os.path.exists(FILE_PATH):
             return app_names
-        with open("password_manage.csv", newline='') as csvfile:
+        with open(FILE_PATH, newline='') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
                 if row[0] == "AppLabel":
                     continue
                 app_names.append(row[0])
         return app_names
+
+    @staticmethod
+    def passcode_checker(passcode):
+        """
+        method to check hashed passcode
+        """
+        hashed = hashlib.sha256(passcode.encode()).hexdigest()
+        if not os.path.exists(FILE_PATH):
+            return messagebox.showerror("Password file error", "either password csv file deleted or empty")
+        if not hashed == HEX_DIGEST:
+            messagebox.showerror("wrong passcode", "Please provide correct passcode")
 
     def show_password(self, passcode, app_name):
         """
@@ -81,17 +92,16 @@ class EncryptionDecryption:
         :param app_name: str
         :return: messagebox
         """
-        if not os.path.exists(FILE_PATH):
-            return messagebox.showerror("Password file error", "either password file deleted or empty")
-        if not passcode == PASSCODE:
-            return messagebox.showerror("wrong passcode", "Please provide correct passcode")
+        # 'AppLabel', 'Username', 'Url', 'Password', 'Key'
+        self.passcode_checker(passcode)
         with open(FILE_PATH, newline="") as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
                 if row[0] == app_name:
-                    if row[1] == SAVE_TYPE["PLAIN"]:
-                        return messagebox.showinfo(f"{app_name}", f"Password is : {row[2]}")
-                    key = bytes(row[1], 'utf-8')
-                    encoded_pass = bytes(row[2], 'utf-8')
-                    return messagebox.showinfo(
-                        f"{app_name}", f"{app_name} Password : {self.decrypt(key=key, enc_password=encoded_pass)}")
+                    if row[4] == SAVE_TYPE["PLAIN"]:
+                        _info = f"Name : {row[0]}\nUsername : {row[1]}\nUrl : {row[2]}\nPassword : {row[3]}"
+                        return messagebox.showinfo(f"{app_name}", _info)
+                    key, encoded_pass = bytes(row[4], 'utf-8'), bytes(row[3], 'utf-8')
+                    password = self.decrypt(key=key, enc_password=encoded_pass)
+                    _info = f"Name : {row[0]}\nUsername : {row[1]}\nUrl : {row[2]}\nPassword : {password}"
+                    return messagebox.showinfo("Password data", _info)
