@@ -74,17 +74,6 @@ class EncryptionDecryption:
                 app_names.append(row[0])
         return app_names
 
-    @staticmethod
-    def passcode_checker(passcode):
-        """
-        method to check hashed passcode
-        """
-        hashed = hashlib.sha256(passcode.encode()).hexdigest()
-        if not os.path.exists(FILE_PATH):
-            return messagebox.showerror("Password file error", "either password csv file deleted or empty")
-        if not hashed == HEX_DIGEST:
-            messagebox.showerror("wrong passcode", "Please provide correct passcode")
-
     def show_password(self, passcode, app_name):
         """
         method to show password after success of passcode for given app_name
@@ -92,8 +81,11 @@ class EncryptionDecryption:
         :param app_name: str
         :return: messagebox
         """
-        # 'AppLabel', 'Username', 'Url', 'Password', 'Key'
-        self.passcode_checker(passcode)
+        hashed = hashlib.sha256(passcode.encode()).hexdigest()
+        if not os.path.exists(FILE_PATH):
+            return messagebox.showerror("Password file error", "either password csv file deleted or empty")
+        if not hashed == HEX_DIGEST:
+            return messagebox.showerror("wrong passcode", "Please provide correct passcode")
         with open(FILE_PATH, newline="") as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:

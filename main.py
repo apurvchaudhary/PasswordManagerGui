@@ -3,7 +3,7 @@ from functools import partial
 from tkinter import messagebox
 from tkinter import simpledialog
 
-from constants import SAVE_TYPE, DISCLAIMER
+from constants import SAVE_TYPE, DISCLAIMER, TITLE_COLOR, SHOW_DOWN_TITLE_COLOR, GUI_BG_COLOR
 from filePaths import set_file_paths
 from salt_algo import EncryptionDecryption
 
@@ -68,7 +68,7 @@ def show_down_menu(window):
     :param window: tkinter obj
     :return: show func
     """
-    prompt4 = tk.Label(text="Check Saved Passwords Below", bg="#cc80ff", pady=2, font=("Times", "22", "bold italic"),
+    prompt4 = tk.Label(text="Check Saved Passwords Below", bg=SHOW_DOWN_TITLE_COLOR, pady=2, font=("Times", "22", "bold"),
                        height=1, width=30)
     prompt4.grid(row=11, rowspan=1, pady=10)
     show_app_list = EncryptionDecryption.get_all_app_labels()
@@ -105,37 +105,37 @@ class Password:
         window.title("PASSWORD MANAGER © 2021 www.apurvchaudhary.com")
         # gui size
         window.geometry("500x600")
-        window.configure(background='#00e6ac')
+        window.configure(background=GUI_BG_COLOR)
         # label
-        prompt = tk.Label(text="128 bit Encrypted Password Manager", bg="#cc80ff", pady=2,
-                          font=("Times", "22", "bold italic"), height=1, width=30)
+        prompt = tk.Label(text="128 bit Encrypted Password Manager", bg=TITLE_COLOR, pady=2,
+                          font=("Times", "22", "bold"), height=1, width=30)
         prompt.grid(row=0, column=0)
 
         # ENTRY FIELD 1
         prompt1 = tk.Label(text="Name of App/Website/Software", font=("Arial", "12", "bold"))
         prompt1.grid(row=1, rowspan=1, sticky="w", padx=20, pady=10)
-        prompt1.configure(background='#00e6ac')
+        prompt1.configure(background=GUI_BG_COLOR)
         entry_field1 = tk.Entry(width=30)
         entry_field1.grid(row=2, rowspan=1, sticky="w", padx=20)
 
         # ENTRY FIELD 3
         prompt3 = tk.Label(text="Username (email/phone/etc)", font=("Arial", "12", "bold"))
         prompt3.grid(row=3, rowspan=1, sticky="w", padx=20, pady=10)
-        prompt3.configure(background='#00e6ac')
+        prompt3.configure(background=GUI_BG_COLOR)
         entry_field3 = tk.Entry(width=30)
         entry_field3.grid(row=4, rowspan=1, sticky="w", padx=20)
 
         # ENTRY FIELD 2
         prompt2 = tk.Label(text="Password", font=("Arial", "12", "bold"))
         prompt2.grid(row=5, rowspan=1, sticky="w", padx=20, pady=10)
-        prompt2.configure(background='#00e6ac')
+        prompt2.configure(background=GUI_BG_COLOR)
         entry_field2 = tk.Entry(width=30)
         entry_field2.grid(row=6, rowspan=1, sticky="w", padx=20)
 
         # ENTRY FIELD 4
         prompt5 = tk.Label(text="URL (optional)", font=("Arial", "12", "bold"))
         prompt5.grid(row=7, rowspan=1, sticky="w", padx=20, pady=10)
-        prompt5.configure(background='#00e6ac')
+        prompt5.configure(background=GUI_BG_COLOR)
         entry_field4 = tk.Entry(width=30)
         entry_field4.grid(row=8, rowspan=1, sticky="w", padx=20)
 
