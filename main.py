@@ -1,11 +1,12 @@
 import tkinter as tk
 from functools import partial
 from tkinter import messagebox
-from tkinter import simpledialog
+from tkinter import simpledialog, filedialog
 
 from constants import SAVE_TYPE, DISCLAIMER, TITLE_COLOR, SHOW_DOWN_TITLE_COLOR, GUI_BG_COLOR
 from filePaths import set_file_paths
 from salt_algo import EncryptionDecryption
+from chromeCsv import chrome_csv_reader
 
 
 def show(var_show, window):
@@ -61,6 +62,19 @@ def save_data(app, username, password, url, mode, window: tk):
         return messagebox.showerror(title="Save Type", message="Choose at least one saving Mode type")
 
 
+def browse_file(window):
+    """
+    file browser for chrome password syncing
+    """
+    filename = filedialog.askopenfilename(initialdir="/", title="Select A File", filetype=(("CSV Files", "*.csv"),))
+    label = tk.Label(window, text="")
+    label.grid(column=1, row=14)
+    label.configure(text=filename)
+    if filename:
+        chrome_csv_reader(filename)
+    show_down_menu(window)
+
+
 def show_down_menu(window):
     """
     show password menu comes only if csv exists in dir
@@ -84,6 +98,13 @@ def show_down_menu(window):
         button2 = tk.Button(text="Show Password", command=partial(show, var_show, window), font=("Times", "12", "bold"))
         button2.grid(row=13, rowspan=1, sticky="w", padx=20, pady=10)
 
+    prompt5 = tk.Label(text="sync password csv files provided by browser", bg=SHOW_DOWN_TITLE_COLOR, pady=2, font=("Times", "10", "bold"),
+                       height=1, width=60)
+    prompt5.grid(row=14, rowspan=1, pady=10)
+    button3 = tk.Button(window, text = "Browse csv file",font=("Times", "12", "bold"),
+                        command=partial(browse_file, window))
+    button3.grid(row=15, rowspan=1, sticky="w", padx=20, pady=35)
+
 
 def show_disclaimer():
     """
@@ -104,7 +125,7 @@ class Password:
         # title
         window.title("PASSWORD MANAGER © 2021 www.apurvchaudhary.com")
         # gui size
-        window.geometry("500x600")
+        window.geometry("500x700")
         window.configure(background=GUI_BG_COLOR)
         # label
         prompt = tk.Label(text="128 bit Encrypted Password Manager", bg=TITLE_COLOR, pady=2,
@@ -155,7 +176,7 @@ class Password:
 
         show_down_menu(window)
         button1 = tk.Button(text="Disclaimer", font=("Arial", "8"), command=show_disclaimer)
-        button1.grid(row=14, pady=20)
+        button1.grid(row=16)
 
         window.mainloop()
 
