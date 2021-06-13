@@ -3,7 +3,8 @@ from functools import partial
 from tkinter import messagebox
 from tkinter import simpledialog, filedialog
 
-from constants import SAVE_TYPE, DISCLAIMER, TITLE_COLOR, SHOW_DOWN_TITLE_COLOR, GUI_BG_COLOR
+from constants import SAVE_TYPE, DISCLAIMER, TITLE_COLOR, SHOW_DOWN_TITLE_COLOR, GUI_BG_COLOR,\
+    LABEL_COLOR, SHOW_DOWN_TITLE_BG_COLOR
 from filePaths import set_file_paths
 from salt_algo import EncryptionDecryption
 from chromeCsv import chrome_csv_reader
@@ -82,28 +83,32 @@ def show_down_menu(window):
     :param window: tkinter obj
     :return: show func
     """
-    prompt4 = tk.Label(text="Check Saved Passwords Below", bg=SHOW_DOWN_TITLE_COLOR, pady=2, font=("Times", "22", "bold"),
-                       height=1, width=30)
-    prompt4.grid(row=11, rowspan=1, pady=10)
+    prompt4 = tk.Label(text="Select App & Click on Show Password", bg=SHOW_DOWN_TITLE_COLOR, pady=2, font=("Times", "20"),
+                       height=1, width=30, fg=SHOW_DOWN_TITLE_BG_COLOR)
+    prompt4.grid(row=7, pady=20, sticky="w", padx=20)
     show_app_list = EncryptionDecryption.get_all_app_labels()
     if show_app_list:
         # option menu 1
         var_show = tk.StringVar(window)
-        var_show.set("Saved")
+        var_show.set("Saved List")
         # second option menu
         option_show = tk.OptionMenu(window, var_show, *show_app_list)
-        option_show.configure(width=10, font=("Times", "10", "bold"))
-        option_show.grid(row=12, rowspan=1, stick="W", padx=20)
+        option_show.configure(width=20, font=("Times", "10", "bold"), bg="black", fg="white")
+        option_show.grid(row=8, stick="w", padx=100)
         # button
-        button2 = tk.Button(text="Show Password", command=partial(show, var_show, window), font=("Times", "12", "bold"))
-        button2.grid(row=13, rowspan=1, sticky="w", padx=20, pady=10)
+        button2 = tk.Button(text="Show Password", command=partial(show, var_show, window), font=("Times", "12", "bold"),
+                            bg=TITLE_COLOR, fg="black")
+        button2.grid(row=8, sticky="e", padx=100)
 
-    prompt5 = tk.Label(text="sync password csv files provided by browser", bg=SHOW_DOWN_TITLE_COLOR, pady=2, font=("Times", "10", "bold"),
-                       height=1, width=60)
-    prompt5.grid(row=14, rowspan=1, pady=10)
-    button3 = tk.Button(window, text = "Browse csv file",font=("Times", "12", "bold"),
-                        command=partial(browse_file, window))
-    button3.grid(row=15, rowspan=1, sticky="w", padx=20, pady=35)
+    prompt5 = tk.Label(text="Sync Browser downloaded CSV File", bg=SHOW_DOWN_TITLE_COLOR, pady=2, font=("Times", "20"),
+                       height=1, width=30, fg=SHOW_DOWN_TITLE_BG_COLOR)
+    prompt5.grid(row=9, pady=20, sticky="w", padx=20)
+    prompt_ = tk.Label(text="Browse csv file to sync", font=("Arial", "12"), fg=LABEL_COLOR)
+    prompt_.grid(row=10, sticky="w", padx=120)
+    prompt_.configure(background=GUI_BG_COLOR)
+    button3 = tk.Button(window, text = "Browse",font=("Times", "12", "bold"),
+                        command=partial(browse_file, window), bg="black", fg="white")
+    button3.grid(row=10, sticky="e", padx=155)
 
 
 def show_disclaimer():
@@ -133,50 +138,55 @@ class Password:
         prompt.grid(row=0, column=0)
 
         # ENTRY FIELD 1
-        prompt1 = tk.Label(text="Name of App/Website/Software", font=("Arial", "12", "bold"))
-        prompt1.grid(row=1, rowspan=1, sticky="w", padx=20, pady=10)
+        prompt1 = tk.Label(text="Name of App/Website/Software :", font=("Arial", "12"), fg=LABEL_COLOR)
+        prompt1.grid(row=1, sticky="w", pady=20, padx=10)
         prompt1.configure(background=GUI_BG_COLOR)
         entry_field1 = tk.Entry(width=30)
-        entry_field1.grid(row=2, rowspan=1, sticky="w", padx=20)
+        entry_field1.grid(row=1, sticky="e", padx=70)
 
         # ENTRY FIELD 3
-        prompt3 = tk.Label(text="Username (email/phone/etc)", font=("Arial", "12", "bold"))
-        prompt3.grid(row=3, rowspan=1, sticky="w", padx=20, pady=10)
+        prompt3 = tk.Label(text="Username (email/phone/etc)", font=("Arial", "12"), fg=LABEL_COLOR)
+        prompt3.grid(row=2, sticky="w", padx=10)
         prompt3.configure(background=GUI_BG_COLOR)
         entry_field3 = tk.Entry(width=30)
-        entry_field3.grid(row=4, rowspan=1, sticky="w", padx=20)
+        entry_field3.grid(row=2, sticky="e", padx=70)
 
         # ENTRY FIELD 2
-        prompt2 = tk.Label(text="Password", font=("Arial", "12", "bold"))
-        prompt2.grid(row=5, rowspan=1, sticky="w", padx=20, pady=10)
+        prompt2 = tk.Label(text="Password", font=("Arial", "12"), fg=LABEL_COLOR)
+        prompt2.grid(row=3, sticky="w", padx=10, pady=20)
         prompt2.configure(background=GUI_BG_COLOR)
         entry_field2 = tk.Entry(width=30)
-        entry_field2.grid(row=6, rowspan=1, sticky="w", padx=20)
+        entry_field2.grid(row=3, sticky="e", padx=70)
 
         # ENTRY FIELD 4
-        prompt5 = tk.Label(text="URL (optional)", font=("Arial", "12", "bold"))
-        prompt5.grid(row=7, rowspan=1, sticky="w", padx=20, pady=10)
+        prompt5 = tk.Label(text="URL(optional)", font=("Arial", "12"), fg=LABEL_COLOR)
+        prompt5.grid(row=4, sticky="w", padx=10)
         prompt5.configure(background=GUI_BG_COLOR)
         entry_field4 = tk.Entry(width=30)
-        entry_field4.grid(row=8, rowspan=1, sticky="w", padx=20)
+        entry_field4.grid(row=4, sticky="e", padx=70)
+
+        _prompt = tk.Label(text="Saving password Mode", font=("Arial", "12"), fg=LABEL_COLOR)
+        _prompt.grid(row=5, sticky="w", padx=10)
+        _prompt.configure(background=GUI_BG_COLOR)
 
         # option menu 1
         var = tk.StringVar(window)
         var.set("Mode")
         option = tk.OptionMenu(window, var, "Plain/Text", "Encrypify")
-        option.configure(font=("Times", "10", "bold"))
-        option.grid(row=9, rowspan=1, stick="W", padx=20, pady=10)
+        option.configure(font=("Arial", "10", "bold"), width=10, bg="black", fg="white")
+        option.grid(row=5, stick="e", pady=20, padx=140)
 
         # button 1
         button1 = tk.Button(text="Save Password",
                             command=partial(save_data, entry_field1, entry_field3, entry_field2,
                                             entry_field4, var, window),
-                            font=("Times", "12", "bold"))
-        button1.grid(row=10, rowspan=1, sticky="w", padx=20)
+                            font=("Times", "12", "bold"), bg=TITLE_COLOR, fg="black")
+        button1.grid(row=6, sticky="e", padx=140)
 
         show_down_menu(window)
-        button1 = tk.Button(text="Disclaimer", font=("Arial", "8"), command=show_disclaimer)
-        button1.grid(row=16)
+        button1 = tk.Button(text="Disclaimer", font=("Arial", "10"), command=show_disclaimer)
+        button1.configure(bg="black", fg="#ffff66")
+        button1.grid(row=11, pady=100, sticky="w", padx=200)
 
         window.mainloop()
 
