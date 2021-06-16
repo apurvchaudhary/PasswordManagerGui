@@ -2,8 +2,8 @@ from csv import reader
 from tkinter import messagebox
 
 from constants import SAVE_TYPE
-from salt_algo import EncryptionDecryption
 from filePaths import PASSWORD_CSV_PATH
+from salt_algo import EncryptionDecryption
 
 
 def chrome_csv_reader(file_path):

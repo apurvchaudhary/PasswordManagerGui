@@ -1,13 +1,14 @@
+import hashlib
 import tkinter as tk
 from functools import partial
 from tkinter import messagebox
 from tkinter import simpledialog, filedialog
 
-from constants import SAVE_TYPE, DISCLAIMER, TITLE_COLOR, SHOW_DOWN_TITLE_COLOR, GUI_BG_COLOR,\
-    LABEL_COLOR, SHOW_DOWN_TITLE_BG_COLOR
-from filePaths import set_file_paths
-from salt_algo import EncryptionDecryption
 from chromeCsv import chrome_csv_reader
+from constants import SAVE_TYPE, DISCLAIMER, TITLE_COLOR, SHOW_DOWN_TITLE_COLOR, GUI_BG_COLOR, \
+    LABEL_COLOR, SHOW_DOWN_TITLE_BG_COLOR
+from filePaths import set_file_paths, HEX_DIGEST_FILE_PATH
+from salt_algo import EncryptionDecryption
 
 
 def show(var_show, window):
@@ -83,7 +84,8 @@ def show_down_menu(window):
     :param window: tkinter obj
     :return: show func
     """
-    prompt4 = tk.Label(text="Select App & Click on Show Password", bg=SHOW_DOWN_TITLE_COLOR, pady=2, font=("Times", "20"),
+    prompt4 = tk.Label(text="Select App & Click on Show Password", bg=SHOW_DOWN_TITLE_COLOR, pady=2,
+                       font=("Times", "20"),
                        height=1, width=30, fg=SHOW_DOWN_TITLE_BG_COLOR)
     prompt4.grid(row=7, pady=20, sticky="w", padx=20)
     show_app_list = EncryptionDecryption.get_all_app_labels()
@@ -106,7 +108,7 @@ def show_down_menu(window):
     prompt_ = tk.Label(text="Browse csv file to sync", font=("Arial", "12"), fg=LABEL_COLOR)
     prompt_.grid(row=10, sticky="w", padx=120)
     prompt_.configure(background=GUI_BG_COLOR)
-    button3 = tk.Button(window, text = "Browse",font=("Times", "12", "bold"),
+    button3 = tk.Button(window, text="Browse", font=("Times", "12", "bold"),
                         command=partial(browse_file, window), bg="black", fg="white")
     button3.grid(row=10, sticky="e", padx=155)
 
@@ -118,77 +120,123 @@ def show_disclaimer():
     return messagebox.showinfo("Disclaimer by Apurv Chaudhary", DISCLAIMER)
 
 
+def set_new_password(window):
+    """
+    setting new password
+    """
+    new_pass = simpledialog.askstring("New Passcode", "Enter your New Passcode (better keep more than 4 character)",
+                                      show="*", parent=window)
+    if len(new_pass) < 4 or len(new_pass) > 16:
+        messagebox.showerror("Reset Passcode", "Passcode length should be 4-16 character")
+        return set_new_password(window)
+    confirm_pass = simpledialog.askstring("Confirm new Passcode", "Confirm new passcode once again",
+                                          show="*", parent=window)
+    if not confirm_pass == new_pass:
+        messagebox.showerror("Reset Passcode", "New passcode & confirm passcode did not match")
+        return set_new_password(window)
+    new_hash = hashlib.sha256(new_pass.encode()).hexdigest()
+    with open("hexDigest.lock", "r+") as const:
+        const.write(new_hash)
+    return messagebox.showinfo("Reset Passcode Done",
+                               "Passcode changed successfully, now onwards use new passcode in show password")
+
+
+def reset_passcode(window):
+    """
+    func to reset passcode first default is 011296
+    """
+    ask_old_pass = simpledialog.askstring("Passcode", "Enter your Old Passcode", show="*", parent=window)
+    if ask_old_pass is None:
+        return
+    elif ask_old_pass == "":
+        messagebox.showinfo("Reset Passcode", "Empty old passcode not allowed")
+        return reset_passcode(window)
+    else:
+        hashed = hashlib.sha256(ask_old_pass.encode()).hexdigest()
+        with open(HEX_DIGEST_FILE_PATH, "r") as hash_pass:
+            read_hash = hash_pass.read()
+        if hashed == read_hash:
+            return set_new_password(window)
+        return messagebox.showerror("Reset Passcode", "Invalid old passcode given as old")
+
+
 class Password:
     """
     Password manager main class for initialising instance of tkinter library further using callables
     """
 
     def __init__(self):
+        """
+        initialising instance of tkinter on main window
+        """
+        # setting file path for dir & csv file creation by func
         set_file_paths()
-
+        # instance of tkinter
         window = tk.Tk()
         # title
         window.title("PASSWORD MANAGER © 2021 www.apurvchaudhary.com")
         # gui size
         window.geometry("500x700")
         window.configure(background=GUI_BG_COLOR)
+
         # label
         prompt = tk.Label(text="128 bit Encrypted Password Manager", bg=TITLE_COLOR, pady=2,
                           font=("Times", "22", "bold"), height=1, width=30)
         prompt.grid(row=0, column=0)
-
         # ENTRY FIELD 1
         prompt1 = tk.Label(text="Name of App/Website/Software :", font=("Arial", "12"), fg=LABEL_COLOR)
         prompt1.grid(row=1, sticky="w", pady=20, padx=10)
         prompt1.configure(background=GUI_BG_COLOR)
         entry_field1 = tk.Entry(width=30)
         entry_field1.grid(row=1, sticky="e", padx=70)
-
         # ENTRY FIELD 3
         prompt3 = tk.Label(text="Username (email/phone/etc)", font=("Arial", "12"), fg=LABEL_COLOR)
         prompt3.grid(row=2, sticky="w", padx=10)
         prompt3.configure(background=GUI_BG_COLOR)
         entry_field3 = tk.Entry(width=30)
         entry_field3.grid(row=2, sticky="e", padx=70)
-
         # ENTRY FIELD 2
         prompt2 = tk.Label(text="Password", font=("Arial", "12"), fg=LABEL_COLOR)
         prompt2.grid(row=3, sticky="w", padx=10, pady=20)
         prompt2.configure(background=GUI_BG_COLOR)
         entry_field2 = tk.Entry(width=30)
         entry_field2.grid(row=3, sticky="e", padx=70)
-
         # ENTRY FIELD 4
         prompt5 = tk.Label(text="URL(optional)", font=("Arial", "12"), fg=LABEL_COLOR)
         prompt5.grid(row=4, sticky="w", padx=10)
         prompt5.configure(background=GUI_BG_COLOR)
         entry_field4 = tk.Entry(width=30)
         entry_field4.grid(row=4, sticky="e", padx=70)
-
+        # password save label
         _prompt = tk.Label(text="Saving password Mode", font=("Arial", "12"), fg=LABEL_COLOR)
         _prompt.grid(row=5, sticky="w", padx=10)
         _prompt.configure(background=GUI_BG_COLOR)
-
-        # option menu 1
+        # option menu for mode
         var = tk.StringVar(window)
         var.set("Mode")
         option = tk.OptionMenu(window, var, "Plain/Text", "Encrypify")
         option.configure(font=("Arial", "10", "bold"), width=10, bg="black", fg="white")
         option.grid(row=5, stick="e", pady=20, padx=140)
-
-        # button 1
+        # button for save password
         button1 = tk.Button(text="Save Password",
-                            command=partial(save_data, entry_field1, entry_field3, entry_field2,
-                                            entry_field4, var, window),
+                            command=partial(save_data, entry_field1, entry_field3, entry_field2, entry_field4, var,
+                                            window),
                             font=("Times", "12", "bold"), bg=TITLE_COLOR, fg="black")
         button1.grid(row=6, sticky="e", padx=140)
-
+        # calling func to show below menu for list of saved of saved password
         show_down_menu(window)
+        # disclaimer button
         button1 = tk.Button(text="Disclaimer", font=("Arial", "10"), command=show_disclaimer)
         button1.configure(bg="black", fg="#ffff66")
-        button1.grid(row=11, pady=100, sticky="w", padx=200)
+        button1.grid(row=11, pady=100, sticky="e", padx=40)
+        # passcode reset button
+        button_pass = tk.Button(text="Reset Passcode", font=("Arial", "10"), command=partial(reset_passcode, window))
+        button_pass.configure(bg="black", fg=TITLE_COLOR)
+        button_pass.grid(row=11, pady=100, sticky="w", padx=20)
 
+        # ending main tkinter instance
         window.mainloop()
 
 
+# calling main class Password
 Password()

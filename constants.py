@@ -1,7 +1,5 @@
 # Kindly do not modify this file can result in lost data
 # modification is at your own risk
-HEX_DIGEST = "87e96e6f0a0f7c4b2ea6c6fd526503b15328f60cbd60657d850d12837f85a14a"
-
 SAVE_TYPE = {
     "PLAIN": "Plain/Text",
     "ENCRYPIFY": "Encrypify"

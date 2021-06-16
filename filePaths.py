@@ -1,5 +1,6 @@
 import os
 
+HEX_DIGEST_FILE_PATH = "hexDigest.lock"
 FILE_NAME = "passwords.csv"
 DIR_NAME = "SecurePassManager/"
 DIR_PATH = os.path.expanduser('~/Documents/')
