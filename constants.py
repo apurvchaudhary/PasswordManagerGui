@@ -13,5 +13,5 @@ SHOW_DOWN_TITLE_BG_COLOR = "#45A29E"
 
 DISCLAIMER = "This PassManager is saving passwords with 128 bit encryption. Its built on top of Python3.8 with Cryptography\n" \
              "\nQues : Why it more useful than other password managers ? Ans : Because it doesn't link to internet in any aspects, " \
-             "whole data is saving in your system with encryptions & only be decoded through your correct passcode.\n\n" \
+             "whole data is saving in your system with encryption & only be decoded through your correct passcode & key.\n\n" \
              "If you really liked it kindly do share & give me thumbs up on my official site i.e www.apurvchaudhary.com"
