@@ -6,7 +6,7 @@ from tkinter import messagebox
 from cryptography.fernet import Fernet
 
 from constants import SAVE_TYPE
-from filePaths import PASSWORD_CSV_PATH as FILE_PATH
+from filePaths import PASSWORD_CSV_PATH as FILE_PATH, HEX_DIGEST_FILE_PATH
 
 
 class EncryptionDecryption:
@@ -84,7 +84,7 @@ class EncryptionDecryption:
         hashed = hashlib.sha256(passcode.encode()).hexdigest()
         if not os.path.exists(FILE_PATH):
             return messagebox.showerror("Password file error", "either password csv file deleted or empty")
-        with open("hexDigest.lock", "r") as hex:
+        with open(HEX_DIGEST_FILE_PATH, "r") as hex:
             read_hash = hex.read()
         if not hashed == read_hash:
             return messagebox.showerror("wrong passcode", "Please provide correct passcode")

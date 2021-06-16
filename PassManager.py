@@ -135,7 +135,7 @@ def set_new_password(window):
         messagebox.showerror("Reset Passcode", "New passcode & confirm passcode did not match")
         return set_new_password(window)
     new_hash = hashlib.sha256(new_pass.encode()).hexdigest()
-    with open("hexDigest.lock", "r+") as const:
+    with open(HEX_DIGEST_FILE_PATH, "r+") as const:
         const.write(new_hash)
     return messagebox.showinfo("Reset Passcode Done",
                                "Passcode changed successfully, now onwards use new passcode in show password")
