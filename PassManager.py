@@ -180,8 +180,8 @@ class Password:
         window.configure(background=GUI_BG_COLOR)
 
         # label
-        prompt = tk.Label(text="128 bit Encrypted Password Manager", bg=TITLE_COLOR, pady=2,
-                          font=("Times", "22", "bold"), height=1, width=30)
+        prompt = tk.Label(text="128 bit Encrypted Password Manager", bg=TITLE_COLOR,
+                          font=("Times", "22", "bold"), height=1, width=48)
         prompt.grid(row=0, column=0)
         # ENTRY FIELD 1
         prompt1 = tk.Label(text="Name of App/Website/Software :", font=("Arial", "12"), fg=LABEL_COLOR)
@@ -223,7 +223,7 @@ class Password:
                                             window),
                             font=("Times", "12", "bold"), bg=TITLE_COLOR, fg="black")
         button1.grid(row=6, sticky="e", padx=140)
-        # calling func to show below menu for list of saved of saved password
+        # calling func to show below menu for list of saved password
         show_down_menu(window)
         # disclaimer button
         button1 = tk.Button(text="Disclaimer", font=("Arial", "10"), command=show_disclaimer)
